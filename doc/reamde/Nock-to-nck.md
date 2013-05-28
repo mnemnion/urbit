@@ -35,27 +35,45 @@ Let's zoom out, for a second: we're looking for a way to use Nock that doesn't r
 
 This requires some changes to our algorithm, and probably to the Hoon toolpath. 
 
-##Nockdown
+##Nockup
 
-There's no special reason Hoon should have to emit Nock directly under all circumstances. For simplicity, I'll pretend Hoon emits an ASCII Nock file, that is then compressed into rules and a binary stream. We've intentionally avoided talking about rule encoding, but it ain't hard. 
+There's no special reason Hoon should have to emit Nock directly under all circumstances. For simplicity, I'll pretend Hoon emits an ASCII Nock file, that is then compressed into rules and a binary stream. We've intentionally avoided talking about rule encoding, but it ain't hard. So all we've used from the ASCII set are the digits, brackets, and two kinds of whitespace, 32 and 10.  This is another reason to consider Operator 10 hateful; any Hoon code will be liberally sprinkled with newlines, though ASCII 9 is banned for good reason. 
+
+We're going to extend this with some markup. Now we're emitting Nockup, which, like Nock, can be compressed into nck. But with a difference!
 
 What we then add is a placeholder character, call it @ for atom, that can match to any atom. Ordinary Hoon never emits this symbol, it is relegated to a special kind of definition that implies a call for jet assistance. It will still be possible to late-bind a rule in this fashion, but it's bad practice if you're not building a rule header. Hoon doesn't need variables; Nockdown is the wrong place to add them, in general. 
 
 When the nck compressor hits an @, it 'throws' a rule. This means it gives the rule a high number, one high enough that it won't interfere with the header you're generating. This is why it's a bad idea to go strewing @s willy-nilly into your code base: throwing is potentially expensive if you're not doing it in early rules.
 
-What you end up with is a deterministic header containing all the formula structures you wanted, with a single rule number that matches the start of each formula. You line them up in order on the left of the rule tree, with the formula structures off to the right, where you don't have to look at them if you don't want to. All the @s are gone, each one has been replaced with a rule that resolves to 0/epsilon, and all of those rules are above the header rules. There are ways to do this compactly, this is just a sketch. 
+This high numbered rule has one match: Rule 0, Epsilon.
+
+What you end up with is a deterministic header containing all the formula structures you wanted, with a single rule number that matches the start of each formula. You line them up in order on the left of the rule tree, with the formula structures off to the right, where you don't have to look at them if you don't want to. All the @s are gone, each one has been replaced with a rule that resolves to 0/epsilon, and all of those rules are above the header rules. The header is now frozen; we can load it into memory and use it for every Hoon executable that's in compatible Nockdown.
 
 When you pass another Nock noun through the rules, you eliminate every variable in formulas that are reached. Here's how, minus confusing optimizations. 
 
-We feed the noun in by attempting to go left, which is equivalent to checking if each structure that we've pre-loaded is the same as the first formula of the noun. If we find it, there will be rules that resolve to Epsilon, meaning any atom is ok.
+We feed the noun in by attempting to go left, which is equivalent to checking if each structure that we've pre-loaded is the same as the first formula of the noun. Failure to match structure backtracks, success records a bitstream. If we find it, there will be rules that resolve to Epsilon, meaning any atom is ok. There will also be rules that resolve to solid atoms, and if that doesn't match, we have a failure to match structure.
 
-If we reach an Epsilon, it's on a throw-rule, which means we're out of the part of the header that we don't want to change. So we add the atom in question as a resolution of the rule. There's some late-binding we have to do here, because until we're done compressing the Nock noun, we don't know how many options there will be. Conceivably it's a lot, but once the Nock noun is fully compressed, it will be a finite number of atoms. At that point, we know how many bits are needed to resolve the terminal rule, and we remove the Epsilon from the terminal rule. We then encode the final atom using only the number of bits needed, with the next bit after that a backtrack. 
+This is O(omg), roughly, so we're going to avoid doing it when possible. More Nockup, later. 
 
-Here's our last use of Rule zero: it gives us an unambigous end to the bit stream. The left option from Rule 1 is Rule 0, so if we backtrack all the way back to Rule 1 and go left, we exit, since we should never match rule 0 during execution or decompression. This is good because a bitstream can contain padding on the end to fill out the word of the target architecture; if that padding is all zeros, the noun will exit correctly. 
+If we reach an Epsilon, it's on a throw-rule, which means we're out of the part of the header that we don't want to change. So we add the atom in question as a resolution of the rule. There's some late-binding we have to do here, because until we're done compressing the Nock noun, we don't know how many options there will be. Conceivably it's a lot, but once the Nock noun is fully compressed, it will be a finite number of atoms at the terminal of each formerly Epsilon-bound rule. At that point, we know how many bits are needed to resolve the terminal rule, and we remove the Epsilon from the terminal rule. We then encode the final atom using only the number of bits needed, with the next bit after that a backtrack. 
+
+Here's our last use of Rule 0: it gives us an unambigous end to the bit stream. The left option from Rule 1 is Rule 0, so if we backtrack all the way back to Rule 1 and go left, we exit, since we should never match rule 0 during execution or decompression. This is good because a bitstream can contain padding on the end to fill out the word of the target architecture; if that padding is all zeros, the noun will exit correctly. 
 
 This modifies our earlier formula: Rule 1 is the egress, resolving to Rule 0 or Rule 2. Rule 2 is the noun in question, with all the precompiled header rules on the left and the rest of the Nock on the right. 
 
 That means that every time you are directed left on rule 2, you are in jet land, and you can cheat as much as you want, matching substrings willy-nilly, passing variables around, calculating swiftly and returning to ground. When you go right on Rule 2, you're in Nockville, execute accordingly. 
 
+This is how we avoid O(omg) behavior: we add another character to Nockup. # is the hash operator, and it should be followed by a hash of the formula it's hinting at. This spares us the labor of checking down the left side of the tree when matching formulas that should be jet-assisted: the nck compressor can use the hints to check a table and provide a bitstream that follows the requisite rule path and late-binds the atom 'variables'. 
+
+In fact, a production Nock interpreter doesn't really spend much time looking at rules it won't execute. There's a simple bytestream that encodes a jet assisted rule, and it starts with 10 (right from rule 1 into rule 2, left from rule 2 into Jet-land). That would be enough if we wanted to execute nck directly, but imposing a decompression penalty on executable code at the time of execution is foolhardy. Similarly, if we unroll the nck into pure Nock, we've lost the jet capacity, because there are No Hints In Nock '4K'.
+
+That means we execute Nockdown, a partially-unrolled, interpreter-specific encoding of Nock interspersed with jet streams. I do not care how this is encoded, because it is not Nock, and therefore it is in practice dependent, not on the Nock, but on the Nock + Jet combination. These should be the same, but we now are back in a state where Nock cannot be made indeterminate by changing it. 
+
+Nockdown can be compressed back into nck, or unrolled into Nock, by the same interpreter and compressor that generated it. Both nck and Nock are completely general and hint-free: the rule order of the nck grammar can be used as a guide to what is expected to be jetted, and a header (which should be pure Nock that crashes on 42 right before it gets to the nck encoding) could provide a helpful summary of, say, what Hoon version produced the nck in question.  
+
 Nockdown is a format where left moves on Rule 2 are compressed into a format useful for the Nock interpreter, whereas right moves on Rule 2 are completely unrolled into bog-standard binary Nock. This is beyond the scope of this document and well past the point where it's worth being specific, without either getting some feedback from @cgyarvin or forking off.
+
+So what do we get here? We now have two cold formats and two warm ones: nck and Nock are chilly beasts, and Nockup and Nockdown are exactly as chilly as Hoon and no colder. The nck function mediates: it can accept and emit nck and Nock, as well as the particular flavors of Nockup and Nockdown it's written for. The Hoon compiler emits Nockup, which, as a superset, can be pure Nock. 
+
+What we pass around is nck; it is pure, small, very cold, and contains only suggestions as to how to jet stream it. Different interpreters vary only in speed, not binary compatibility, and can make a good-faith effort to figure out which jets to provide for unfamiliar nck formats. In practice, given Urbit, any publicly available nck 'format' should have as many jet sets as it needs available in the agora. Fully unrolled Nock is a rarity, and difficult to pack down into the 'format' of nck that it came from, but is always available at any time, from within any of the four fundamental forms. 
 
