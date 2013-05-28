@@ -31,4 +31,8 @@ It's not even totally clear that we'd end up with anything but a second stack of
 
 Nock has no concept of a variable, at all. nck, however, does: rule 0 resolves to any atom, because it's special. We aren't using it, yet, and it can't appear in the uncompressed Nock: Hoon resolves all variables, it must, because Nock has none. 
 
+Let's zoom out, for a second: we're looking for a way to use Nock that doesn't rely on hinting to produce jet-assisted code. To do this, one step is to put all the jet-assisted formulas at the top of the rule stack, in a way that lets us reuse the rule stack on later nouns. Ideally, the very front are the hardware-level jets, followed by the most important Hoon code, and so on, embodying the entire Hoon kernel in a single compressed ruleset that all nouns are subsequently prepended with during the nckdown stage. 
+
+This requires some changes to our algorithm, and probably to the Hoon toolpath. 
+
 There's no special reason Hoon should have to emit Nock, however. It can emit a Nock intermediate that allows for generic atoms,
