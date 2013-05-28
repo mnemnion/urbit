@@ -20,3 +20,15 @@ The noun is therefore represented as series of left-right, 0-1 bits that travers
 So, presuming we use the same Nock noun, the binary stream needs no terminating clauses. It simply reads out until it hits terminal atoms, then backtracks to unresolved branches and continues filling them in. 
 
 So how far do we get on one bit? All the way to the left, if that bit is zero. If it's one, we go right one, and then all the way to the left. We then backtrack one node and see if there are choices, if not (that is, if the left-most node was a cell of two atoms), we add the atom and backtrack again. When there are choices, we consume another bit, and Bob's your uncle. 
+
+So now, instead of a binary tree which only flows down, we have a DAG and a path through it. This is straightforward stuff. 
+
+Let's observe a property: this algorithm makes the rules in the order it finds them, but that order is not used in decompression. The numbers are just names, the order an artifact of their discovery: the names can be permuted without loss of structure. 
+
+This means in principle we can reuse the ruleset from one Nock noun to nck another Nock noun (which I am compulsively spelling nwn). This will work, in the sense that we'll have a superset of rules that will decompress both nouns. It will not work as well as we want, because our atoms are hard coded. This means we'll have large subgraphs that differ only by a few atoms, but poor reuse of that structure, since resolution to a different atom will rebound a considerable distance up the tree. 
+
+It's not even totally clear that we'd end up with anything but a second stack of rules on top of the first. The product of two ncked nouns would be the size of the sum of the two nouns ncked separately. Not what we want. 
+
+Nock has no concept of a variable, at all. nck, however, does: rule 0 resolves to any atom, because it's special. We aren't using it, yet, and it can't appear in the uncompressed Nock: Hoon resolves all variables, it must, because Nock has none. 
+
+There's no special reason Hoon should have to emit Nock, however. It can emit a Nock intermediate that allows for generic atoms,
