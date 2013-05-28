@@ -19,7 +19,7 @@ The noun is therefore represented as series of left-right, 0-1 bits that travers
 
 So, presuming we use the same Nock noun, the binary stream needs no terminating clauses. It simply reads out until it hits terminal atoms, then backtracks to unresolved branches and continues filling them in. 
 
-So how far do we get on one bit? All the way to the left, if that bit is zero. If it's one, we go right one, and then all the way to the left. We then backtrack one node and see if there are choices, if not (that is, if the left-most node was a cell of two atoms), we add the atom and backtrack again. When there are choices, we consume another bit, and Bob's your uncle. 
+So how far do we get on one bit? Each bit in simple nck will get us back a single noun. These are given back to us depth first, left-to-right, that is, this is the order that the Nock tree is reconstituted in. If we were generating ASCII we would make left brackets when we reach cells, atom strings when we reach atoms, and right brackets upon the final backtrack out of a cell rule. 
 
 So now, instead of a binary tree which only flows down, we have a DAG and a path through it. This is straightforward stuff. 
 
