@@ -1,0 +1,2 @@
+## Nock -> nck algorithm
+
