@@ -11,6 +11,10 @@ n-ary trees are also a product of context-free grammars, given a linear input st
 
 Each of these rules is given a number, and we may as well count from zero. It is probably helpful to have an epsilon rule, that may match any atom, and we will call this rule 0. Rule 1 is the noun we are compressing, rule 2 is the subject and rule 3 is the formula of that noun, and so on, that is, rule 2 for a cell subject, rule 3 for a cell formula, and other rules for atomic terminations. This assumes that both the subject and formula of the Nock noun are atoms, which is good for the UR-rule as it keeps the resulting graph extremely compact. 
 
+So, for the degenerate case of a noun that is an atom, we have rule zero, epsilon, and rule 1, the atom, and a bitstream consisting of the bit 0, meaning 'choose the leftmost option of rule 1'. Left will conventionally represent the termination of a rule with one resolution. 
+
+This is slightly larger, rather than compressed. Don't nck atoms. I mean, it's harmless, just, don't.
+
 The noun is therefore represented as series of left-right, 0-1 bits that traverse the graph and end in the correct atoms. This is simple nck, it generates a unique rule for each atom and never uses the Epsilon rule. It will match the Nock noun for which it was created, because it's a straightforward compression of that noun.  
 
 So, presuming we use the same Nock noun, the binary stream needs no terminating clauses. It simply reads out until it hits terminal atoms, then backtracks to unresolved branches and continues filling them in. 
