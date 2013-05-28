@@ -69,6 +69,8 @@ In fact, a production Nock interpreter doesn't really spend much time looking at
 
 That means we execute Nockdown, a partially-unrolled, interpreter-specific encoding of Nock interspersed with jet streams. I do not care how this is encoded, because it is not Nock, and therefore it is in practice dependent, not on the Nock, but on the Nock + Jet combination. These should be the same, but we now are back in a state where Nock cannot be made indeterminate by changing it. 
 
+There are no variables in Nockdown. There aren't even "variables". There should be no use of Rule 0 at all, because Nockdown doesn't actually have a grammar, it's been unrolled and the left JetLand side of the stack replaced with call-specific binary code that will serve the same purpose. The header rules are kept around, and the hash makes it easy to look up the Nock, unroll it with the bound values, and execute it if necessary. 
+
 Nockdown can be compressed back into nck, or unrolled into Nock, by the same interpreter and compressor that generated it. Both nck and Nock are completely general and hint-free: the rule order of the nck grammar can be used as a guide to what is expected to be jetted, and a header (which should be pure Nock that crashes on 42 right before it gets to the nck encoding) could provide a helpful summary of, say, what Hoon version produced the nck in question.  
 
 Nockdown is a format where left moves on Rule 2 are compressed into a format useful for the Nock interpreter, whereas right moves on Rule 2 are completely unrolled into bog-standard binary Nock. This is beyond the scope of this document and well past the point where it's worth being specific, without either getting some feedback from @cgyarvin or forking off.
