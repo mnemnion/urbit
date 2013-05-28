@@ -55,4 +55,7 @@ Here's our last use of Rule zero: it gives us an unambigous end to the byte stre
 
 This modifies our earlier formula: Rule 1 is the egress, resolving to Rule 0 or Rule 2. Rule 2 is the noun in question, with all the precompiled header rules on the left and the rest of the Nock on the right. 
 
+That means that every time you are directed left on rule 2, you are in jet land, and you can cheat as much as you want, matching substrings willy-nilly, passing variables around, calculating swiftly and returning to ground. When you go right on Rule 2, you're in Nockville, execute accordingly. 
+
+Nockdown is a format where left moves on Rule 2 are compressed into a format useful for the Nock interpreter, whereas right moves on Rule 2 are completely unrolled into bog-standard binary Nock. This is beyond the scope of this document and well past the point where it's worth being specific, without either getting some feedback from @cgyarvin or forking off.
 
