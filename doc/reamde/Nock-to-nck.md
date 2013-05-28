@@ -41,7 +41,7 @@ There's no special reason Hoon should have to emit Nock directly under all circu
 
 We're going to extend this with some markup. Now we're emitting Nockup, which, like Nock, can be compressed into nck. But with a difference!
 
-What we then add is a placeholder character, call it @ for atom, that can match to any atom. Ordinary Hoon never emits this symbol, it is relegated to a special kind of definition that implies a call for jet assistance. It will still be possible to late-bind a rule in this fashion, but it's bad practice if you're not building a rule header. Hoon doesn't need variables; Nockdown is the wrong place to add them, in general. 
+What we then add is a placeholder character, call it @ for atom, that can match to any atom. Ordinary Hoon never emits this symbol, it is relegated to a special kind of definition that implies the definition of a jet assisted formula. It will still be possible to late-bind a rule in this fashion, but it's bad practice if you're not building a rule header. Hoon doesn't need variables; Nockup is the wrong place to add them, in general. 
 
 When the nck compressor hits an @, it 'throws' a rule. This means it gives the rule a high number, one high enough that it won't interfere with the header you're generating. This is why it's a bad idea to go strewing @s willy-nilly into your code base: throwing is potentially expensive if you're not doing it in early rules.
 
