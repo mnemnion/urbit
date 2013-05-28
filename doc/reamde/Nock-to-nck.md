@@ -1,4 +1,4 @@
-## Nock -> nck algorithm
+# Nock -> nck algorithm
 
 This is a public domain, English language exploration of an algorithm to compress Nock into a grammar. This compressed form of Nock is known as nck, pronounced nick. 
 
@@ -35,4 +35,22 @@ Let's zoom out, for a second: we're looking for a way to use Nock that doesn't r
 
 This requires some changes to our algorithm, and probably to the Hoon toolpath. 
 
-There's no special reason Hoon should have to emit Nock, however. It can emit a Nock intermediate that allows for generic atoms,
+##Nockdown
+
+There's no special reason Hoon should have to emit Nock directly under all circumstances. For simplicity, I'll pretend Hoon emits an ASCII Nock file, that is then compressed into rules and a binary stream. We've intentionally avoided talking about rule encoding, but it ain't hard. 
+
+What we then add is a placeholder character, call it @ for atom, that can match to any atom. Ordinary Hoon never emits this symbol, it is relegated to a special kind of definition that implies a call for jet assistance. It will still be possible to late-bind a rule in this fashion, but it's bad practice if you're not building a rule header. Hoon doesn't need variables; Nockdown is the wrong place to add them, in general. 
+
+When the nck compressor hits an @, it 'throws' a rule. This means it gives the rule a high number, one high enough that it won't interfere with the header you're generating. This is why it's a bad idea to go strewing @s willy-nilly into your code base: throwing is potentially expensive if you're not doing it in early rules.
+
+What you end up with is a deterministic header containing all the formula structures you wanted, with a single rule number that matches the start of each formula. You line them up in order on the left of the rule tree, with the formula structures off to the right, where you don't have to look at them if you don't want to. All the @s are gone, each one has been replaced with a rule that resolves to 0/epsilon, and all of those rules are above the header rules. There are ways to do this compactly, this is just a sketch. 
+
+When you pass another Nock noun through the rules, you eliminate every variable in formulas that are reached. Here's how, minus confusing optimizations. 
+
+We feed the noun in by attempting to go left, which is equivalent to checking if each structure that we've pre-loaded is the same as the first formula of the noun. If we find it, there will be rules that resolve to Epsilon, meaning any atom is ok.
+
+If we reach an Epsilon, it's on a throw-rule, which means we're out of the part of the header that we don't want to change. So we add the atom in question as a resolution of the rule. There's some late-binding we have to do here, because until we're done compressing the Nock noun, we don't know how many options there will be. Conceivably it's a lot, but once the Nock noun is fully compressed, it will be a finite number of atoms. At that point, we know how many bits are needed to resolve the terminal rule, and we remove the Epsilon from the terminal rule. We then encode the final atom using only the number of bits needed, with the next bit after that a backtrack. 
+
+Here's our last use of Rule zero: it gives us an unambigous end to the byte stream. The left option from Rule 1 is Rule 0, so if we backtrack all the way back to Rule 1 and go left, we exit, since we should never match rule 0 during execution or decompression. This is good because a bitstream can contain padding on the end to fill out the word of the target architecture; if that padding is all zeros, the noun will exit correctly. 
+
+
