@@ -53,4 +53,6 @@ If we reach an Epsilon, it's on a throw-rule, which means we're out of the part 
 
 Here's our last use of Rule zero: it gives us an unambigous end to the byte stream. The left option from Rule 1 is Rule 0, so if we backtrack all the way back to Rule 1 and go left, we exit, since we should never match rule 0 during execution or decompression. This is good because a bitstream can contain padding on the end to fill out the word of the target architecture; if that padding is all zeros, the noun will exit correctly. 
 
+This modifies our earlier formula: Rule 1 is the egress, resolving to Rule 0 or Rule 2. Rule 2 is the noun in question, with all the precompiled header rules on the left and the rest of the Nock on the right. 
+
 
