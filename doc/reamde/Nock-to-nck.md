@@ -5,7 +5,7 @@ This is a public domain, English language + pseudocode exploration of an algorit
 This document is thoroughly room temperature. If it proves fruitful, I will chill it.
 
 
-Nock is formally a binary tree, which is 80% of why I like it. Every cell is a node with up to two children, and every atom may be considered a leaf. 
+Nock is formally a binary tree, which is 80% of why I like it. Every cell is a node with exactly two children, and every atom may be considered a leaf. 
 
 n-ary trees are also a product of context-free grammars, given a linear input stream. This means Nock can be compressed into such a grammar, where every cell has exactly two resolutions (left or right), and each possible atom found within the structure is one option at the terminal rule. 
 
