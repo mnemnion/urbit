@@ -1,6 +1,6 @@
 ## Nock -> nck algorithm
 
-This is a public domain, English language + pseudocode exploration of an algorithm to compress Nock into a grammar. This compressed form of Nock is known as nck, pronounced nick. 
+This is a public domain, English language exploration of an algorithm to compress Nock into a grammar. This compressed form of Nock is known as nck, pronounced nick. 
 
 This document is thoroughly room temperature. If it proves fruitful, I will chill it.
 
