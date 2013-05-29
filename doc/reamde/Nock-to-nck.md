@@ -91,8 +91,15 @@ A nc(k) grammar has information, in the form of the rule order, that is not used
 
 Any Nock noun at all may be compressed into an nc grammer. To do so, we must perform fairly extensive subgraph matching, if we wish to use the rules in the nc grammar and not merely append our own. This may take awhile, but it surely can be done, without any hinting at all, as a one-time price of compilation.
 
-If we wish to make this faster, we can employ Nockup, which we also need to make generic nc rules. Nockup adds only two things to Nock: a pattern that matches any atom, and a hint that a compatible ncknock compressor can use to match the underlying subgraph in constant time. Thus, Nockup does exactly two additional things: populates generic rules, and hints at the use of those generic rules in specific code. ncknock may use those hints or ignore them, but must verify the shape of the subgraph against the grammar rule before consenting to encode it. 
+If we wish to make this faster, we can employ Nockup, which we also need to make generic nc rules. Nockup adds only two things to Nock: a pattern that matches any atom, and a hint that a compatible ncknock compressor can use to match the underlying subgraph in constant time. Thus, Nockup does exactly two additional things: populates generic rules, and hints at the use of those generic rules in specific code. ncknock may use those hints or ignore them, but must verify the shape of the subgraph against the grammar rule before consenting to encode it. Hints exclusively help ncknock find the subgraph to be matched faster. 
+
+This leaves Nockdown, which is a binary, execution specific partial unrolling of nck in which everything jetted is expressed in the fastest possible binary format for jet execution and all other Nock is fully unrolled and interpreted. Nockdown is not any one format, though the Martian goal would be to have one canonical Nockdown that corresponds to fast-executing Hoon code. 
+
+Note that Nockdown never interacts with Nockup at all. Nockup is used for generics and fast subgraph matching, exclusively, and Nockdown is used only and entirely to provide whatever jets are available in the execution environment. Nocking down a nck file produced with different jet expectations may take longer, contain more Nock and less Jet, and run slower as a result. But it will produce the same result in all cases, and if not, we fault the jets, always, because our Nock contains no hints and Cannot Be Undetermined. 
+
+Nockdown is an execution format, not an exchange format or a reference format. Nockdown is produced from nck and cached; the nck is canonical and is all that is ever traded, called, updated or referenced.
+
+The relationship between nck and Nock is that nck <-> Nock is information preserving with respect to correctness of results, but may be destructive to speed if done naively. 
 
 
-For convenience, we assume that Nock may be either in ASCII or a binary format, and don't distinguish between them. 
 
