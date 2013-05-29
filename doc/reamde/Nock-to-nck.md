@@ -83,7 +83,16 @@ What we pass around is nck; it is pure, small, very cold, and contains only sugg
 
 Let's back out a little and see what we've done to ourselves. Fundamentally, this is refactoring. 
 
-First, we have Nock '4K', or Nock 0-9 to presume less. It is hintless, and hence hard to execute efficiently. It is only used in the pure form to reduce some noun to a canonical state; because we cannot execute it effiently, we seldom do. 
+First, we have Nock '4K', or Nock 0-9 to presume less. It is hintless, and hence hard to execute efficiently. It is only used in the pure form to expand some noun to a canonical state; because we cannot execute it effiently, we seldom do. 
 
 Second, we have nck. nck is fundamentally compressed Nock, consisting of a grammar followed by a path through the grammar that reconstitutes the original tree. However, not all nck can be unrolled into Nock, since the grammar rules can be made semi-generic and separated from any bitstream that reconstitutes a noun. Perhaps we should call these bare headers nc. nc across any noun at all will produce nck, which can then be unrolled into Nock. 
+
+A nc(k) grammar has information, in the form of the rule order, that is not used in uncompressing Nock from nck. In addition, subgraphs in an nc grammar may contain unresolved atoms that point to Rule 0; in order for a noun to invoke those rules, these atoms must be resolved as part of the process of compression. 
+
+Any Nock noun at all may be compressed into an nc grammer. To do so, we must perform fairly extensive subgraph matching, if we wish to use the rules in the nc grammar and not merely append our own. This may take awhile, but it surely can be done, without any hinting at all, as a one-time price of compilation.
+
+If we wish to make this faster, we can employ Nockup, which we also need to make generic nc rules. Nockup adds only two things to Nock: a pattern that matches any atom, and a hint that a compatible ncknock compressor can use to match the underlying subgraph in constant time. Thus, Nockup does exactly two additional things: populates generic rules, and hints at the use of those generic rules in specific code. ncknock may use those hints or ignore them, but must verify the shape of the subgraph against the grammar rule before consenting to encode it. 
+
+
+For convenience, we assume that Nock may be either in ASCII or a binary format, and don't distinguish between them. 
 
