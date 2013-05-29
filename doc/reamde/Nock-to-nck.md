@@ -79,3 +79,11 @@ So what do we get here? We now have two cold formats and two warm ones: nck and 
 
 What we pass around is nck; it is pure, small, very cold, and contains only suggestions as to how to jet stream it. Different interpreters vary only in speed, not binary compatibility, and can make a good-faith effort to figure out which jets to provide for unfamiliar nck formats. In practice, given Urbit, any publicly available nck 'format' should have as many jet sets as it needs available in the agora. Fully unrolled Nock is a rarity, and difficult to pack down into the 'format' of nck that it came from, but is always available at any time, from within any of the four fundamental forms. 
 
+## Separation of Concerns.
+
+Let's back out a little and see what we've done to ourselves. Fundamentally, this is refactoring. 
+
+First, we have Nock '4K', or Nock 0-9 to presume less. It is hintless, and hence hard to execute efficiently. It is only used in the pure form to reduce some noun to a canonical state; because we cannot execute it effiently, we seldom do. 
+
+Second, we have nck. nck is fundamentally compressed Nock, consisting of a grammar followed by a path through the grammar that reconstitutes the original tree. However, not all nck can be unrolled into Nock, since the grammar rules can be made semi-generic and separated from any bitstream that reconstitutes a noun. Perhaps we should call these bare headers nc. nc across any noun at all will produce nck, which can then be unrolled into Nock. 
+
