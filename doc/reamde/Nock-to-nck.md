@@ -95,6 +95,8 @@ If we wish to make this faster, we can employ Nockup, which we also need to make
 
 This leaves Nockdown, which is a binary, execution specific partial unrolling of nck in which everything jetted is expressed in the fastest possible binary format for jet execution and all other Nock is fully unrolled and interpreted. Nockdown is not any one format, though the Martian goal would be to have one canonical Nockdown that corresponds to fast-executing Hoon code. 
 
+This is where the yakety-sax starts playing, because Nock 5K, complete with grungy hints, is a perfectly reasonable Nockdown. The problem is reduced to the status of middleware: cleaning up the Hoon compilers output to be a binary form of Nockup or something like it, writing ncknock, ncknocking the latest Hoon kernel, and writing another function that unrolls Hoon-encoded nck into Nockdown, which starts with Nock 5k but is no longer constrained by its execution semantics. 
+
 Note that Nockdown never interacts with Nockup at all. Nockup is used for generics and fast subgraph matching, exclusively, and Nockdown is used only and entirely to provide whatever jets are available in the execution environment. Nocking down a nck file produced with different jet expectations may take longer, contain more Nock and less Jet, and run slower as a result. But it will produce the same result in all cases, and if not, we fault the jets, always, because our Nock contains no hints and Cannot Be Undetermined. 
 
 Nockdown is an execution format, not an exchange format or a reference format. Nockdown is produced from nck and cached; the nck is canonical and is all that is ever traded, called, updated or referenced.
