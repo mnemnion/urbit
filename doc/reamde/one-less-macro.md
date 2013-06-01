@@ -6,15 +6,7 @@ Nock is Kelvin versioned: this means changes to the specification are counted do
 
 Nothing much has changed between Nock 9K and Nock 5K. You can do a diff if you want: slight changes of symbol choice, an admirable increase in terseness, that's about it.
 
-One part of Nock is utterly mathematically fixed, and that is the definition of nouns, atoms and cells. It is among the simplest possible finite data structures, that is, a data structure may be as simple but not simpler. This I will prove by contradiction. 
-
-Let's assume a simpler data structure: a single number, untroubled by any further division. This is a datum, albeit a large one, and identity being the only operation on a set of one, computation is not possible without imposing a structure. 
-
-Let us assume a slightly more complex data structure: a series of numbers. This is arguably a structure, and by imposing an arity of two on all functions it can be made to work for computation (the proof left as an exercise for John McCarthy). 
-
-But by imposing an arity of two on all functions we have imposed further structure, namely a list, or a vector in math terms. Our ordered series of numbers could just as easily have represented key-value pairs, or a collection of independent data which can be arbitrarily sorted without loss of meaning. In other words, without arity or some other imposition, our list of numbers is data, not a data structure.
-
-Nock imposes a better structure, a binary tree, and embeds it in the fundamental specificaiton. This is better.
+One part of Nock is utterly mathematically fixed, and that is the definition of nouns, atoms and cells. It is among the simplest possible finite data structures, and is the Nock axiom. I happen to like this axiom quite a bit.
 
 The rest of Nock is arbitrary in the sense that other representations for the same transformations could be chosen. That is, parens could associate to the left, turning `[a b c]` into `[[[a] b] c]`, and this would be fine. Technically, any permutation on the 11 operators provided would function in the same fashion, and it would be trivial to translate real-life codebases with a little cryptanalysis, even if the permutation wasn't known. 
 
