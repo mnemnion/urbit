@@ -9,7 +9,7 @@ Nock is formally a binary tree, which is 80% of why I like it. Every cell is a n
 
 n-ary trees are also a product of context-free grammars, given a linear input stream. This means Nock can be compressed into such a grammar, where every cell has exactly two resolutions (left or right), and each possible atom found within the structure is the sole option at a single terminal rule. 
 
-Each of these rules is given a number, and we may as well count from zero. It is probably helpful to have an epsilon rule, that may match any atom, and we will call this rule 0. Rule 1 is the noun we are compressing, rule 2 is the subject and rule 3 is the formula of that noun, and so on, that is, rule 2 for a cell subject, rule 3 for a cell formula, and other rules for atomic terminations. This assumes that both the subject and formula of the Nock noun are atoms, which is good for the UR-rule as it keeps the resulting graph extremely compact. 
+Each of these rules is given a number, and we may as well count from zero. It is probably helpful to have an epsilon rule, that may match any atom, and we will call this rule 0. Rule 1 is the noun we are compressing, rule 2 is the subject and rule 3 is the formula of that noun, and so on, that is, rule 2 for a cell subject, rule 3 for a cell formula, and other rules for atomic terminations. This assumes that both the subject and formula of the Nock noun are cells, which is good for the UR-rule as it keeps the resulting graph extremely compact. 
 
 So, for the degenerate case of a noun that is an atom, we have rule zero, epsilon, and rule 1, the atom, and a bitstream consisting of the bit 0, meaning 'choose the leftmost option of rule 1'. Left will conventionally represent the termination of a rule with one resolution. 
 
